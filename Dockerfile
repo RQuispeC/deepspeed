@@ -147,6 +147,30 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     ln -s /usr/local/include/opencv4/opencv2 /usr/local/include/opencv2 && \
 
 # ==================================================================
+# deep-person-reid
+# ------------------------------------------------------------------
+RUN PIP_INSTALL="python -m pip --no-cache-dir install --upgrade" && \
+    APT_NSTALL="apt-get install -y --no-install-recommends" && \
+		PIP_INSTALL \
+				numpy \
+				Cython \
+				h5py \
+				Pillow \
+				six \
+				scipy \
+				opencv-python \
+				matplotlib \
+				tb-nightly \
+				future \
+				yacs \
+				gdown \
+				opencv-contrib-python \
+        && \
+    apt-get update && \
+		APT_INSTALL \
+        libsm6 libxext6 libxrender1 libfontconfig1 && \ 
+
+# ==================================================================
 # config & cleanup
 # ------------------------------------------------------------------
 
@@ -154,3 +178,5 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     apt-get clean && \
     apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* ~/*
+
+
