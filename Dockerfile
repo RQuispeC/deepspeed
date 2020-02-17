@@ -7,7 +7,7 @@
 # opencv        4.1.2  (git)
 # ==================================================================
 
-FROM ubuntu:18.04
+FROM nvidia/cuda:10.0-devel-ubuntu18.04
 ENV LANG C.UTF-8
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     PIP_INSTALL="python -m pip --no-cache-dir install --upgrade" && \
@@ -99,22 +99,27 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
         && \
     $PIP_INSTALL \
         --pre torch torchvision -f \
-        https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html \
-        && \
+        https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html 
 
 # ==================================================================
 # deepspeed
 # ------------------------------------------------------------------
+RUN useradd --create-home --uid 1000 --shell /bin/bash deepspeed
+RUN usermod -aG sudo deepspeed
+RUN echo "deepspeed ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+# # Change to non-root privilege
 
-  $GIT_CLONE https://github.com/microsoft/DeepSpeed.git && \
-  cd DeepSpeed && \
-  ./install.sh && \
+RUN git clone https://github.com/RQuispeC/DeepSpeed-1 && \
+  cd DeepSpeed-1 && \
+  ./install.sh
 
 # ==================================================================
 # opencv
 # ------------------------------------------------------------------
 
-    DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
+RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
+    PIP_INSTALL="python -m pip --no-cache-dir install --upgrade" && \
+    GIT_CLONE="git clone --depth 10" &&   DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         libatlas-base-dev \
         libgflags-dev \
         libgoogle-glog-dev \
